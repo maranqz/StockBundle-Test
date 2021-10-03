@@ -30,10 +30,6 @@ jobs:
                 symfony-require: [""]
                 variant: [normal]
                 include:
-                    - php-version: '7.3'
-                      dependencies: lowest
-                      allowed-to-fail: false
-                      variant: normal
                     - php-version: '8.0'
                       dependencies: highest
                       allowed-to-fail: false
