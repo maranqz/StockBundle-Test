@@ -5,6 +5,7 @@ namespace maranqz\StockBundle\Command;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use maranqz\StockBundle\Entity\Stock;
+use maranqz\StockBundle\Exception\StockError;
 use maranqz\StockBundle\Form\Type\CreateStockType;
 use maranqz\StockBundle\Form\Type\UpdateStockType;
 use maranqz\StockBundle\Repository\StockRepository;
@@ -15,6 +16,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 
 class StockImportCommand extends Command
@@ -41,9 +43,14 @@ class StockImportCommand extends Command
      */
     private $formFactory;
 
-    public function __construct(string $publicPath, EntityManagerInterface $em, StockService $stockService, FormFactoryInterface $formFactory, string $name = null)
+    public function __construct(string $publicPath, EntityManagerInterface $em, StockService $stockService, FormFactoryInterface $formFactory, ContainerInterface $container, string $name = null)
     {
         parent::__construct($name);
+
+        $webRoot = $container->get('kernel')->getProjectDir().DIRECTORY_SEPARATOR.'public';
+        $publicPath = $webRoot.DIRECTORY_SEPARATOR.$publicPath;
+
+        $this->checkPath($webRoot, $publicPath);
 
         $this->publicPath = $publicPath;
         $this->em = $em;
@@ -62,8 +69,9 @@ class StockImportCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        // We can use realpath function to check that path only in web directory
-        $path = $this->publicPath.$input->getArgument(self::ARGUMENT_PATH);
+        $path = $this->publicPath.DIRECTORY_SEPARATOR.$input->getArgument(self::ARGUMENT_PATH);
+        $this->checkPath($this->publicPath, $path);
+
         $batchSize = $input->getOption(self::OPTION_BATCH_SIZE);
 
         if (!file_exists($path)) {
@@ -121,9 +129,7 @@ class StockImportCommand extends Command
 
         foreach ($itemsIndexBy as $key => $item) {
             $data = [
-                'sku' => $item[0],
-                'branch' => $item[1],
-                'stock' => $item[2],
+                'count' => (int) $item[2],
             ];
 
             $entity = $entitiesIndexBy[$key] ?? null;
@@ -132,14 +138,28 @@ class StockImportCommand extends Command
             if (!$entity) {
                 $type = CreateStockType::class;
                 $method = [$this->stockService, 'create'];
+                $data['sku'] = $item[0];
+                $data['branch'] = $item[1];
             }
 
             $form = ($this->formFactory->create($type, $entity))
                 ->submit($data);
-            $method($form, false);
+
+            try {
+                $method($form, false);
+            } catch (StockError $e) {
+                throw new RuntimeException(print_r($data, 1).$e->getMessage(), 0, $e);
+            }
         }
 
         $this->stockService->flush();
         $this->em->clear();
+    }
+
+    private function checkPath(string $rootPath, string $path)
+    {
+        if (0 !== strpos(realpath($path), realpath($rootPath))) {
+            throw new InvalidArgumentException(sprintf('The path is invalid and should be inside %s', $rootPath));
+        }
     }
 }

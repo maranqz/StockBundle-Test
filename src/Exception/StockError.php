@@ -17,7 +17,7 @@ class StockError extends Exception
     {
         $this->form = $form;
 
-        parent::__construct('Validation error', $code, $previous);
+        parent::__construct($form->getErrors(), $code, $previous);
     }
 
     public function getFrom(): FormInterface

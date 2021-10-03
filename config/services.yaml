@@ -1,6 +1,7 @@
 parameters:
     stock.email.sender: '%env(STOCK_NOTIFICATION_SENDER)%'
     stock.email.receiver: '%env(STOCK_NOTIFICATION_RECEIVER)%'
+    stock.public_path: '%env(STOCK_PUBLIC_PATH)%'
 
 services:
     _defaults:
@@ -29,3 +30,8 @@ services:
             $notificationSender: '%stock.email.sender%'
             $notificationReceiver: '%stock.email.receiver%'
         tags: [ messenger.message_handler ]
+
+    # Command
+    maranqz\StockBundle\Command\StockImportCommand:
+        arguments:
+            $publicPath: '%stock.public_path%'

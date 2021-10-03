@@ -21,10 +21,13 @@ Need to
         resource: '@StockBundle/config/routes.yaml'
         prefix:   /
     ```
-1. add in bundles.php
-    ```php
-    maranqz\StockBundle\StockBundle::class => ['all' => true],
-    ```
+1. set environments 
+```dotenv
+STOCK_NOTIFICATION_SENDER=sender@gmail.com
+STOCK_NOTIFICATION_RECEIVER=receiver@gmail.com
+STOCK_PUBLIC_PATH=
+MAILER_DSN=null://null
+```
 1. create a migration and apply it
     ```bash
     php bin/console doctrine:migrations:diff -q
