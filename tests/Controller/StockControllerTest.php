@@ -4,6 +4,7 @@ namespace maranqz\StockBundle\Tests\Controller;
 
 use maranqz\StockBundle\Tests\Factory\StockFactory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Mime\Email;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
@@ -11,6 +12,7 @@ class StockControllerTest extends WebTestCase
 {
     use ResetDatabase;
     use Factories;
+
     public const SKU = 'sku';
     public const BRANCH = 'branch';
     public const COUNT = 5;
@@ -70,7 +72,7 @@ class StockControllerTest extends WebTestCase
         $crawler = $client->submit($form, [
             'create_stock[sku]' => '',
             'create_stock[branch]' => '',
-            'create_stock[count]' => (string) (self::COUNT - self::COUNT - 1),
+            'create_stock[count]' => '-1',
         ]);
 
         $this->assertCount(3, $crawler->filter('ul'), 'Error counts');
@@ -96,7 +98,7 @@ class StockControllerTest extends WebTestCase
 
         $this->assertCount(2, $form->all(), 'Count of fields in the form');
 
-        $crawler = $client->submit($form, [
+        $client->submit($form, [
             'update_stock[count]' => $expCount,
         ]);
 
@@ -104,6 +106,94 @@ class StockControllerTest extends WebTestCase
             'sku' => self::SKU,
             'branch' => self::BRANCH,
         ])->getCount());
+    }
+
+    /**
+     * @dataProvider dataTestMessage
+     */
+    public function testMessageSending(callable $factory, callable $url, array $data, ?Email $expMessage)
+    {
+        $factory($this);
+
+        $client = static::createClient();
+
+        $crawler = $client->request('GET', $url($this));
+
+        $client->submit($crawler->filter('form')->form(), $data);
+
+        /** @var Email $message */
+        $message = $this->getMailerMessage();
+
+        if (isset($expMessage)) {
+            $this->assertEquals($expMessage->getFrom(), $message->getFrom());
+            $this->assertEquals($expMessage->getTo(), $message->getTo());
+            $this->assertEquals($expMessage->getSubject(), $message->getSubject());
+            $this->assertEquals($expMessage->getTextBody(), $message->getTextBody());
+        } else {
+            $this->assertNull($message);
+        }
+    }
+
+    public function dataTestMessage(): array
+    {
+        $expMessage = (new Email())
+            ->from('sender@email.com')
+            ->to('receiver@email.com')
+            ->subject('Stock out in branch for sku')
+            ->text('sku stocks need to be replenished in branch');
+
+        $createFormName = 'create_stock';
+        $updateFormName = 'update_stock';
+
+        return [
+            'create with empty data' => [
+                function () {
+                },
+                function (StockControllerTest $self) {
+                    return $self->router()->generate('stock.create');
+                },
+                [
+                    $createFormName.'[sku]' => self::SKU,
+                    $createFormName.'[branch]' => self::BRANCH,
+                    $createFormName.'[count]' => 0,
+                ],
+                $expMessage,
+            ],
+            'update data' => [
+                function () {
+                    StockFactory::createOne([
+                        'sku' => self::SKU,
+                        'branch' => self::BRANCH,
+                        'count' => self::COUNT,
+                    ]);
+                },
+                function (StockControllerTest $self) {
+                    return $self->router()->generate('stock.update', [
+                        'sku' => self::SKU,
+                        'branch' => self::BRANCH,
+                    ]);
+                },
+                [$updateFormName.'[count]' => 0],
+                $expMessage,
+            ],
+            'without update stock' => [
+                function () {
+                    StockFactory::createOne([
+                        'sku' => self::SKU,
+                        'branch' => self::BRANCH,
+                        'count' => 0,
+                    ]);
+                },
+                function (StockControllerTest $self) {
+                    return $self->router()->generate('stock.update', [
+                        'sku' => self::SKU,
+                        'branch' => self::BRANCH,
+                    ]);
+                },
+                [$updateFormName.'[count]' => 0],
+                null,
+            ],
+        ];
     }
 
     protected static function createClient(array $options = [], array $server = [])
