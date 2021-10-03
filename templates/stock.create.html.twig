@@ -1,0 +1,10 @@
+{% extends '@Stock/base.html.twig' %}
+
+{% block body %}
+<div>
+    {{ form(form) }}
+</div>
+<div>
+    <a href="{{ path('stock.list') }}">Back</a>
+</div>
+{% endblock %}

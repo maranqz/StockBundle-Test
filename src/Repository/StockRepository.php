@@ -1,8 +1,8 @@
 <?php
 
-namespace App\StockBundle\Repository;
+namespace maranqz\StockBundle\Repository;
 
-use App\StockBundle\Entity\Stock;
+use maranqz\StockBundle\Entity\Stock;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

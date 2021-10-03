@@ -1,0 +1,20 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    # Repository
+    maranqz\StockBundle\Repository\StockRepository: ~
+
+    # Controller
+    maranqz\StockBundle\Controller\StockController: ~
+
+    # Service
+    maranqz\StockBundle\Service\StockService: ~
+
+    # Event Dispatcher
+    maranqz\StockBundle\EventListener\StockChangeListener:
+        tags:
+            - { name: kernel.event_subscriber }
+    maranqz\StockBundle\Component\EventDispatcher\DelayedEventDispatcher:
+        decorates: Symfony\Component\EventDispatcher\EventDispatcherInterface

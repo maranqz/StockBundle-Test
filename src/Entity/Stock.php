@@ -1,9 +1,9 @@
 <?php
 
-namespace App\StockBundle\Entity;
+namespace maranqz\StockBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use App\StockBundle\Repository\StockRepository;
+use maranqz\StockBundle\Repository\StockRepository;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -30,7 +30,7 @@ class Stock
      * @Assert\PositiveOrZero
      * @Assert\NotBlank
      */
-    private $stock;
+    private $count;
 
     public function __construct(string $sku, string $branch)
     {
@@ -48,14 +48,14 @@ class Stock
         return $this->branch;
     }
 
-    public function getStock(): ?int
+    public function getCount(): ?int
     {
-        return $this->stock;
+        return $this->count;
     }
 
-    public function setStock(int $stock): self
+    public function setCount(int $count): self
     {
-        $this->stock = $stock;
+        $this->count = $count;
 
         return $this;
     }

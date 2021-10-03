@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\StockBundle\Migrations;
+namespace DoctrineMigrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20210929201338 extends AbstractMigration
+final class Version20211002200337 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,7 +20,7 @@ final class Version20210929201338 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE TABLE stock (sku VARCHAR(12) NOT NULL, branch VARCHAR(3) NOT NULL, stock INTEGER NOT NULL, PRIMARY KEY(sku, branch))');
+        $this->addSql('CREATE TABLE stock (sku VARCHAR(12) NOT NULL, branch VARCHAR(3) NOT NULL, count INTEGER NOT NULL, PRIMARY KEY(sku, branch))');
     }
 
     public function down(Schema $schema): void

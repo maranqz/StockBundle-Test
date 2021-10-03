@@ -1,0 +1,28 @@
+{# @var stock \maranqz\StockBundle\Entity\Stock #}
+{% extends '@Stock/base.html.twig' %}
+
+{% block body %}
+    <div>
+        <a href="{{ path('stock.create') }}">Create</a>
+        <table>
+            <tr>
+                <td>sku</td>
+                <td>branch</td>
+                <td>stock</td>
+            </tr>
+            {% for stock in pagination %}
+                <tr>
+                    <td>{{ stock.sku }}</td>
+                    <td>{{ stock.branch }}</td>
+                    <td>{{ stock.stock }}</td>
+                    <td>
+                        <a href="{{ path('stock.update', {sku: stock.sku, branch: stock.branch}) }}">
+                            Update
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div>{{ knp_pagination_render(pagination) }}</div>
+{% endblock %}

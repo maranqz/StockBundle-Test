@@ -1,18 +1,22 @@
 <?php
 
-namespace App\StockBundle\Command;
+namespace maranqz\StockBundle\Command;
 
-use App\StockBundle\Entity\Stock;
-use App\StockBundle\Repository\StockRepository;
+use maranqz\StockBundle\Entity\Stock;
+use maranqz\StockBundle\Form\Type\CreateStockType;
+use maranqz\StockBundle\Form\Type\UpdateStockType;
+use maranqz\StockBundle\Repository\StockRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectRepository;
 use InvalidArgumentException;
+use maranqz\StockBundle\Service\StockService;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Form\FormFactoryInterface;
 
 class StockImportCommand extends Command
 {
@@ -29,14 +33,24 @@ class StockImportCommand extends Command
     private $em;
     /** @var StockRepository */
     private $repository;
+    /**
+     * @var StockService
+     */
+    private $stockService;
+    /**
+     * @var FormFactoryInterface
+     */
+    private $formFactory;
 
-    public function __construct(string $publicPath, EntityManagerInterface $em, string $name = null)
+    public function __construct(string $publicPath, EntityManagerInterface $em, StockService $stockService, FormFactoryInterface $formFactory, string $name = null)
     {
         parent::__construct($name);
 
         $this->publicPath = $publicPath;
         $this->em = $em;
         $this->repository = $em->getRepository(Stock::class);
+        $this->stockService = $stockService;
+        $this->formFactory = $formFactory;
     }
 
     protected function configure(): void
@@ -107,17 +121,26 @@ class StockImportCommand extends Command
         }
 
         foreach ($itemsIndexBy as $key => $item) {
-            $entity = $entitiesIndexBy[$key] ?? false;
+            $data = [
+                'sku' => $item[0],
+                'branch' => $item[1],
+                'stock' => $item[2],
+            ];
+
+            $entity = $entitiesIndexBy[$key] ?? null;
+            $type = UpdateStockType::class;
+            $method = [$this->stockService, 'update'];
             if (!$entity) {
-                $entity = new Stock($item[0], $item[1]);
-                $this->em->persist($entity);
+                $type = CreateStockType::class;
+                $method = [$this->stockService, 'create'];
             }
 
-            // TODO 0 stock
-            $entity->setStock((int)$item[2]);
+            $form = ($this->formFactory->create($type, $entity))
+                ->submit($data);
+            $method($form, false);
         }
 
-        $this->em->flush();
+        $this->stockService->flush();
         $this->em->clear();
     }
 }

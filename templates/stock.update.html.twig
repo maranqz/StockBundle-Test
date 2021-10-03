@@ -1,0 +1,12 @@
+{% extends '@Stock/base.html.twig' %}
+
+{% block body %}
+<div>
+    sku - {{ stock.sku }}
+    branch - {{ stock.branch }}
+    {{ form(form) }}
+</div>
+<div>
+    <a href="{{ path('stock.list') }}">Back</a>
+</div>
+{% endblock %}
