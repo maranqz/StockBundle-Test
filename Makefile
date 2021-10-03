@@ -1,5 +1,10 @@
+fix: cs-fix composer.normilize
+
 cs-fix:
 	php vendor/bin/php-cs-fixer fix
+
+composer.normilize:
+	composer normalize
 
 stan:
 	php vendor/bin/phpstan analyse src tests
