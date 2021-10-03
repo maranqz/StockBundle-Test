@@ -11,7 +11,7 @@ use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel;
-use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
+use Symfony\Component\Routing\RouteCollectionBuilder;
 
 class TestingKernel extends Kernel
 {
@@ -38,7 +38,7 @@ class TestingKernel extends Kernel
         return __DIR__;
     }
 
-    protected function configureRoutes(RoutingConfigurator $routes): void
+    protected function configureRoutes(RouteCollectionBuilder $routes): void
     {
         $routes->import($this->getProjectDir().'/config/routes.yaml');
     }

@@ -115,6 +115,6 @@ class StockControllerTest extends WebTestCase
 
     protected function router()
     {
-        return static::getContainer()->get('router');
+        return static::$kernel->getContainer()->get('router');
     }
 }
