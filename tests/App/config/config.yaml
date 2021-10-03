@@ -1,0 +1,11 @@
+imports:
+    - doctrine.yaml
+
+framework:
+    test: true
+    secret: 'some_secret'
+
+twig:
+    exception_controller: null
+    strict_variables: '%kernel.debug%'
+

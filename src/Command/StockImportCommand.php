@@ -2,13 +2,12 @@
 
 namespace maranqz\StockBundle\Command;
 
+use Doctrine\ORM\EntityManagerInterface;
+use InvalidArgumentException;
 use maranqz\StockBundle\Entity\Stock;
 use maranqz\StockBundle\Form\Type\CreateStockType;
 use maranqz\StockBundle\Form\Type\UpdateStockType;
 use maranqz\StockBundle\Repository\StockRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ObjectRepository;
-use InvalidArgumentException;
 use maranqz\StockBundle\Service\StockService;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
@@ -64,7 +63,7 @@ class StockImportCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // We can use realpath function to check that path only in web directory
-        $path = $this->publicPath . $input->getArgument(self::ARGUMENT_PATH);
+        $path = $this->publicPath.$input->getArgument(self::ARGUMENT_PATH);
         $batchSize = $input->getOption(self::OPTION_BATCH_SIZE);
 
         if (!file_exists($path)) {
@@ -73,7 +72,7 @@ class StockImportCommand extends Command
 
         $file = fopen($path, 'r');
 
-        if ($file === false) {
+        if (false === $file) {
             throw new RuntimeException(error_get_last());
         }
 
@@ -87,7 +86,7 @@ class StockImportCommand extends Command
                 }
 
                 $items[] = $data;
-                $currentBatchSize--;
+                --$currentBatchSize;
                 if ($currentBatchSize <= 0) {
                     $currentBatchSize = $batchSize;
                     $this->import($items);
@@ -111,13 +110,13 @@ class StockImportCommand extends Command
         $ids = $itemsIndexBy = [];
         foreach ($items as $item) {
             $ids[] = ['sku' => $item[0], 'branch' => $item[1]];
-            $itemsIndexBy[$item[0] . '.' . $item[1]] = $item;
+            $itemsIndexBy[$item[0].'.'.$item[1]] = $item;
         }
 
         $entitiesIndexBy = [];
         foreach ($this->repository->findByKeys($ids) as $entity) {
-            /** @var Stock $entity */
-            $entitiesIndexBy[$entity->getSku() . '.' . $entity->getBranch()] = $entity;
+            /* @var Stock $entity */
+            $entitiesIndexBy[$entity->getSku().'.'.$entity->getBranch()] = $entity;
         }
 
         foreach ($itemsIndexBy as $key => $item) {

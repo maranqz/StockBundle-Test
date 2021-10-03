@@ -1,3 +1,17 @@
+var
 vendor
-.php-cs-fixer.cache
+tests/App/var
+
 composer.lock
+
+###> symfony/phpunit-bridge ###
+.phpunit
+.phpunit.result.cache
+phpunit.xml
+###< symfony/phpunit-bridge ###
+
+
+###> friendsofphp/php-cs-fixer ###
+/.php-cs-fixer
+/.php-cs-fixer.cache
+###< friendsofphp/php-cs-fixer ###

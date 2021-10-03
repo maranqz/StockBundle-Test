@@ -1,3 +1,7 @@
+parameters:
+    stock.email.sender: '%env(STOCK_NOTIFICATION_SENDER)%'
+    stock.email.receiver: '%env(STOCK_NOTIFICATION_RECEIVER)%'
+
 services:
     _defaults:
         autowire: true
@@ -18,3 +22,10 @@ services:
             - { name: kernel.event_subscriber }
     maranqz\StockBundle\Component\EventDispatcher\DelayedEventDispatcher:
         decorates: Symfony\Component\EventDispatcher\EventDispatcherInterface
+
+    # Message
+    maranqz\StockBundle\MessageHandler\StockOutNotificationHandler:
+        arguments:
+            $notificationSender: '%stock.email.sender%'
+            $notificationReceiver: '%stock.email.receiver%'
+        tags: [ messenger.message_handler ]

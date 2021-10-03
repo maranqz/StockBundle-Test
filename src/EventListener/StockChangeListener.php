@@ -33,7 +33,7 @@ class StockChangeListener implements EventSubscriberInterface
         $stock = $event->getStock();
         $originData = $event->getOriginData();
 
-        if (isset($originData['stock']) && $stock->getCount() === $originData['stock']) {
+        if (isset($originData['count']) && $stock->getCount() === $originData['count']) {
             return;
         }
 

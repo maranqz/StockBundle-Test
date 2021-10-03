@@ -1,0 +1,4 @@
+stock_bundle:
+    resource: "@StockBundle/config/routes.yaml"
+    prefix: /
+

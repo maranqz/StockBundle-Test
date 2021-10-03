@@ -2,13 +2,13 @@
 
 namespace maranqz\StockBundle\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use maranqz\StockBundle\Entity\Stock;
 use maranqz\StockBundle\Form\Type\CreateStockType;
 use maranqz\StockBundle\Form\Type\UpdateStockType;
 use maranqz\StockBundle\Repository\StockRepository;
 use maranqz\StockBundle\Service\StockService;
-use Doctrine\ORM\EntityManagerInterface;
-use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

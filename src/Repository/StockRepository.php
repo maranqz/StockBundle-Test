@@ -2,9 +2,9 @@
 
 namespace maranqz\StockBundle\Repository;
 
-use maranqz\StockBundle\Entity\Stock;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use maranqz\StockBundle\Entity\Stock;
 
 /**
  * @method Stock|null find($id, $lockMode = null, $lockVersion = null)
@@ -31,14 +31,14 @@ class StockRepository extends ServiceEntityRepository
         foreach ($keys as $index => $key) {
             $qb->orWhere(
                 $qb->expr()->andX(
-                    $qb->expr()->eq('s.sku', ':sku' . $index),
-                    $qb->expr()->eq('s.branch', ':branch' . $index)
+                    $qb->expr()->eq('s.sku', ':sku'.$index),
+                    $qb->expr()->eq('s.branch', ':branch'.$index)
                 )
             );
 
             $qb
-                ->setParameter('sku' . $index, $key['sku'])
-                ->setParameter('branch' . $index, $key['branch']);
+                ->setParameter('sku'.$index, $key['sku'])
+                ->setParameter('branch'.$index, $key['branch']);
         }
 
         return $qb->getQuery()->getResult();

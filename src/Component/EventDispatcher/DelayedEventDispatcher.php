@@ -6,7 +6,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Throwable;
 
 /**
- * Changed from https://github.com/olvlvl/delayed-event-dispatcher
+ * Changed from https://github.com/olvlvl/delayed-event-dispatcher.
  */
 class DelayedEventDispatcher implements EventDispatcherInterface
 {
@@ -41,26 +41,24 @@ class DelayedEventDispatcher implements EventDispatcherInterface
     private $queue = [];
 
     /**
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param bool $disabled
-     * @param callable|null $delayArbiter The delay arbiter determines whether an event should be delayed or not. It's
-     *     a callable with the following signature: `function($event, string $eventName = null): bool`. The
-     *     default delay arbiter just returns `true`, all events are delayed. Note: The delay arbiter is only invoked
-     *     if delaying events is enabled.
+     * @param callable|null $delayArbiter     The delay arbiter determines whether an event should be delayed or not. It's
+     *                                        a callable with the following signature: `function($event, string $eventName = null): bool`. The
+     *                                        default delay arbiter just returns `true`, all events are delayed. Note: The delay arbiter is only invoked
+     *                                        if delaying events is enabled.
      * @param callable|null $exceptionHandler This callable handles exceptions thrown during event dispatching. It's a
-     *     callable with the following signature:
-     *     `function(\Throwable $exception, $event, string $eventName = null): void`. The default exception
-     *     handler just throws the exception.
-     * @param callable|null $flusher By default, delayed events are dispatched with the decorated event dispatcher
-     *     when flushed, but you can choose another solution entirely, like sending them to consumers using RabbitMQ or
-     *     Kafka. The callable has the following signature: `function($event, string $eventName = null): void`.
+     *                                        callable with the following signature:
+     *                                        `function(\Throwable $exception, $event, string $eventName = null): void`. The default exception
+     *                                        handler just throws the exception.
+     * @param callable|null $flusher          By default, delayed events are dispatched with the decorated event dispatcher
+     *                                        when flushed, but you can choose another solution entirely, like sending them to consumers using RabbitMQ or
+     *                                        Kafka. The callable has the following signature: `function($event, string $eventName = null): void`.
      */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
-        bool                     $disabled = false,
-        callable                 $delayArbiter = null,
-        callable                 $exceptionHandler = null,
-        callable                 $flusher = null
+        bool $disabled = false,
+        callable $delayArbiter = null,
+        callable $exceptionHandler = null,
+        callable $flusher = null
     ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->enabled = !$disabled;
@@ -76,7 +74,7 @@ class DelayedEventDispatcher implements EventDispatcherInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function dispatch(object $event, string $eventName = null): object
     {

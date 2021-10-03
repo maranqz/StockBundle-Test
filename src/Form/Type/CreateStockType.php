@@ -35,10 +35,10 @@ class CreateStockType extends AbstractType implements DataMapperInterface
             'data_class' => Stock::class,
             'empty_data' => function (FormInterface $form) {
                 return new Stock(
-                    (string)$form->get('sku')->getData(),
-                    (string)$form->get('branch')->getData()
+                    (string) $form->get('sku')->getData(),
+                    (string) $form->get('branch')->getData()
                 );
-            }
+            },
         ]);
     }
 
