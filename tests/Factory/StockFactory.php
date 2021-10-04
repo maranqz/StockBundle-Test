@@ -25,6 +25,10 @@ use Zenstruck\Foundry\Proxy;
  */
 final class StockFactory extends ModelFactory
 {
+    public const DEFAULT_SKU = 'sku';
+    public const DEFAULT_BRANCH = 'branch';
+    public const DEFAULT_COUNT = 5;
+
     protected function getDefaults(): array
     {
         return [

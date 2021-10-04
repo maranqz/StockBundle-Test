@@ -158,7 +158,10 @@ class StockImportCommand extends Command
 
     private function checkPath(string $rootPath, string $path)
     {
-        if (0 !== strpos(realpath($path), realpath($rootPath))) {
+        $path = realpath($path);
+        $rootPath = realpath($rootPath);
+
+        if ($path && $rootPath && 0 !== strpos($path, $rootPath)) {
             throw new InvalidArgumentException(sprintf('The path is invalid and should be inside %s', $rootPath));
         }
     }

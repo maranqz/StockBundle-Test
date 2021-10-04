@@ -35,3 +35,6 @@ services:
     maranqz\StockBundle\Command\StockImportCommand:
         arguments:
             $publicPath: '%stock.public_path%'
+        tags:
+            name: 'console.command'
+            command: 'stock:import'

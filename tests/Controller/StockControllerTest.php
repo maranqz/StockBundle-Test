@@ -13,10 +13,6 @@ class StockControllerTest extends WebTestCase
     use ResetDatabase;
     use Factories;
 
-    public const SKU = 'sku';
-    public const BRANCH = 'branch';
-    public const COUNT = 5;
-
     public function testPagination()
     {
         StockFactory::createMany(30);
@@ -42,20 +38,20 @@ class StockControllerTest extends WebTestCase
 
         $form = $crawler->selectButton('create_stock[save]')->form();
         $client->submit($form, [
-            'create_stock[sku]' => self::SKU,
-            'create_stock[branch]' => self::BRANCH,
-            'create_stock[count]' => (string) self::COUNT,
+            'create_stock[sku]' => StockFactory::DEFAULT_SKU,
+            'create_stock[branch]' => StockFactory::DEFAULT_BRANCH,
+            'create_stock[count]' => (string) StockFactory::DEFAULT_COUNT,
         ]);
 
         $this->assertResponseRedirects($this->router()->generate('stock.update', [
-            'sku' => self::SKU,
-            'branch' => self::BRANCH,
+            'sku' => StockFactory::DEFAULT_SKU,
+            'branch' => StockFactory::DEFAULT_BRANCH,
         ]));
 
         StockFactory::assert()->exists([
-            'sku' => self::SKU,
-            'branch' => self::BRANCH,
-            'count' => self::COUNT,
+            'sku' => StockFactory::DEFAULT_SKU,
+            'branch' => StockFactory::DEFAULT_BRANCH,
+            'count' => StockFactory::DEFAULT_COUNT,
         ]);
     }
 
@@ -81,11 +77,11 @@ class StockControllerTest extends WebTestCase
     public function testUpdateValid()
     {
         $stock = StockFactory::createOne([
-            'sku' => self::SKU,
-            'branch' => self::BRANCH,
-            'count' => self::COUNT,
+            'sku' => StockFactory::DEFAULT_SKU,
+            'branch' => StockFactory::DEFAULT_BRANCH,
+            'count' => StockFactory::DEFAULT_COUNT,
         ]);
-        $expCount = self::COUNT + 1;
+        $expCount = StockFactory::DEFAULT_COUNT + 1;
 
         $client = static::createClient();
 
@@ -103,8 +99,8 @@ class StockControllerTest extends WebTestCase
         ]);
 
         $this->assertSame($expCount, StockFactory::find([
-            'sku' => self::SKU,
-            'branch' => self::BRANCH,
+            'sku' => StockFactory::DEFAULT_SKU,
+            'branch' => StockFactory::DEFAULT_BRANCH,
         ])->getCount());
     }
 
@@ -153,8 +149,8 @@ class StockControllerTest extends WebTestCase
                     return $self->router()->generate('stock.create');
                 },
                 [
-                    $createFormName.'[sku]' => self::SKU,
-                    $createFormName.'[branch]' => self::BRANCH,
+                    $createFormName.'[sku]' => StockFactory::DEFAULT_SKU,
+                    $createFormName.'[branch]' => StockFactory::DEFAULT_BRANCH,
                     $createFormName.'[count]' => 0,
                 ],
                 $expMessage,
@@ -162,15 +158,15 @@ class StockControllerTest extends WebTestCase
             'update data' => [
                 function () {
                     StockFactory::createOne([
-                        'sku' => self::SKU,
-                        'branch' => self::BRANCH,
-                        'count' => self::COUNT,
+                        'sku' => StockFactory::DEFAULT_SKU,
+                        'branch' => StockFactory::DEFAULT_BRANCH,
+                        'count' => StockFactory::DEFAULT_COUNT,
                     ]);
                 },
                 function (StockControllerTest $self) {
                     return $self->router()->generate('stock.update', [
-                        'sku' => self::SKU,
-                        'branch' => self::BRANCH,
+                        'sku' => StockFactory::DEFAULT_SKU,
+                        'branch' => StockFactory::DEFAULT_BRANCH,
                     ]);
                 },
                 [$updateFormName.'[count]' => 0],
@@ -179,15 +175,15 @@ class StockControllerTest extends WebTestCase
             'without update stock' => [
                 function () {
                     StockFactory::createOne([
-                        'sku' => self::SKU,
-                        'branch' => self::BRANCH,
+                        'sku' => StockFactory::DEFAULT_SKU,
+                        'branch' => StockFactory::DEFAULT_BRANCH,
                         'count' => 0,
                     ]);
                 },
                 function (StockControllerTest $self) {
                     return $self->router()->generate('stock.update', [
-                        'sku' => self::SKU,
-                        'branch' => self::BRANCH,
+                        'sku' => StockFactory::DEFAULT_SKU,
+                        'branch' => StockFactory::DEFAULT_BRANCH,
                     ]);
                 },
                 [$updateFormName.'[count]' => 0],
