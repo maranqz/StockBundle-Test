@@ -10,6 +10,7 @@ use maranqz\StockBundle\Tests\Factory\StockFactory;
 use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Bundle\FrameworkBundle\Test\MailerAssertionsTrait;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Form\FormFactoryInterface;
 use Throwable;
@@ -20,6 +21,7 @@ class StockImportCommandTest extends KernelTestCase
 {
     use ResetDatabase;
     use Factories;
+    use MailerAssertionsTrait;
 
     public const COMMAND = 'stock:import';
 
@@ -116,7 +118,7 @@ class StockImportCommandTest extends KernelTestCase
             ]);
 
             if ($hasMessage) {
-                $this->assertCount(1, $this->getMailerMessages());
+                $this->assertEmailCount(1);
             }
         } catch (Throwable $e) {
             throw $e;
