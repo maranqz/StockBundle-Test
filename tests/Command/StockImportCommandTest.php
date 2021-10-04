@@ -116,7 +116,7 @@ class StockImportCommandTest extends KernelTestCase
             ]);
 
             if ($hasMessage) {
-                $this->assertEmailCount(1);
+                $this->assertCount(1, $this->getMailerMessages());
             }
         } catch (Throwable $e) {
             throw $e;
